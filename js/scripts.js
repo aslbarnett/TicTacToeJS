@@ -6,6 +6,8 @@ let currentPlayer;
 let player1;
 let player2;
 
+let availableSquares = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
 
 let xArray = [];
 let oArray = [];
@@ -127,19 +129,27 @@ const box = document.getElementsByClassName('box');
 // }
 function boardOperation() {
     $('.box').one('click', function() {
+        console.log(currentPlayer);
+        let index = $('.box').index(this);
+        let mainArrayIndex = availableSquares.indexOf(index);
         if (currentPlayer === player1) {
             this.style.backgroundImage = 'url(img/o.svg)';
             this.className = 'box box-filled-1';
-            oArray.push($('.box').index(this));
+            if (mainArrayIndex > -1) {
+                availableSquares.splice(mainArrayIndex, 1);
+            }
+            oArray.push(index);
             checkWin();
             currentPlayer = player2;
         } else {
             this.style.backgroundImage = 'url(img/x.svg)';
             this.className = 'box box-filled-2';
-            xArray.push($('.box').index(this));
+            if (mainArrayIndex > -1) {
+                availableSquares.splice(mainArrayIndex, 1);
+            }
+            xArray.push(index);
             checkWin();
             currentPlayer = player1;
-
         }
 
         turn(currentPlayer);
@@ -163,8 +173,10 @@ function boardOperation() {
 }
 
 function clearBoard() {
+    currentPlayer = player1;
     oArray = [];
     xArray = [];
+    availableSquares = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     $('.box').each(function () {
         this.style.backgroundImage = 'none';
         this.className = 'box';
@@ -196,27 +208,30 @@ function checkWin() {
         let checkXArray = winArray[j].every(function (value) { return xArray.indexOf(value) > -1 });
         let checkOArray = winArray[j].every(function (value) { return oArray.indexOf(value) > -1 });
         if (checkXArray === true) {
-            removeWinScreen();
             hideBoard();
             createWinScreen('Winner', 'screen-win-two');
             hideBoard();
             showWinScreen();
             break;
         } else if (checkOArray === true) {
-            removeWinScreen();
-            createWinScreen('Winner', 'screen-win-one');
             hideBoard();
+            createWinScreen('Winner', 'screen-win-one');
             showWinScreen();
             break;
+        } else if (availableSquares.length === 0) {
+            hideBoard();
+            createWinScreen("It's a Tie!", 'screen-win-tie');
+            showWinScreen();
         }
     }
+
 
 }
 
 function createWinScreen(message, classSelection) {
     endScreenContainer.className = 'screen screen-win ' + classSelection;
     endScreenContainer.id = 'finish';
-    winH1.innerHTML = 'Tic Tac Toe';git
+    winH1.innerHTML = 'Tic Tac Toe';
     winP.className = 'message';
     winP.innerHTML = message;
     winA.href = '#';
