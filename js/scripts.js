@@ -100,6 +100,7 @@ function turn(player) {
     } else {
         player2Element.className = 'players active';
         player1Element.className = 'players';
+        computerBoardOperation();
     }
 }
 
@@ -180,6 +181,25 @@ function boardOperation() {
     $('.box').on('mouseout', function() {
         if (!(this.className === 'box box-filled-1') && !(this.className === 'box box-filled-2')) {
             this.style.backgroundImage = 'none';
+        }
+    });
+}
+
+function computerBoardOperation() {
+    const randomSquare = availableSquares[Math.floor(Math.random() * availableSquares.length)];
+    $('.box').each(function() {
+        if ($('.box').index(this) === randomSquare) {
+            this.style.backgroundImage = 'url(img/x.svg)';
+            this.className = 'box box-filled-2';
+            let index = $('.box').index(this);
+            let mainArrayIndex = availableSquares.indexOf(index);
+            if (mainArrayIndex > -1) {
+                availableSquares.splice(mainArrayIndex, 1);
+            }
+            xArray.push(index);
+            checkWin();
+            currentPlayer = player1;
+            turn(currentPlayer);
         }
     });
 }
