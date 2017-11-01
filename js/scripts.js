@@ -6,6 +6,12 @@ let currentPlayer;
 let player1;
 let player2;
 
+let playerName;
+let playerNameElement = document.createElement('p');
+let computerNameElement = document.createElement('p');
+computerNameElement.innerHTML = 'Computer';
+
+
 let availableSquares = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 
@@ -19,6 +25,9 @@ const endScreenContainer = document.createElement('div');
 
 const player1Element = document.getElementById('player1');
 const player2Element = document.getElementById('player2');
+
+player1Element.appendChild(playerNameElement);
+player2Element.appendChild(computerNameElement);
 
 const headerWin = document.createElement('header');
 const winP = document.createElement('p');
@@ -36,8 +45,8 @@ function hideBoard() {
 
 function showBoard() {
     entireBoard.style.display = 'block';
-    player1 = new Player('player1', 'X');
-    player2 = new Player('player2', 'O');
+    player1 = new Player('player1', 'O');
+    player2 = new Player('player2', 'X');
     currentPlayer = player1;
     turn(currentPlayer);
 }
@@ -55,6 +64,9 @@ function createStartScreen(container) {
     startScreenLink.className = 'button';
     startScreenLink.innerHTML = 'Start game';
     startScreenLink.addEventListener('click', function() {
+        playerName = prompt('Please enter your name:');
+        playerNameElement.innerHTML = playerName;
+
         hideStartScreen();
         showBoard();
         boardOperation();
@@ -81,6 +93,7 @@ function Player(name, type) {
 
 // HELPER METHODS -- CURRENT PLAYER
 function turn(player) {
+    console.log(player.name);
     if (player.name === 'player1') {
         player1Element.className = 'players active';
         player2Element.className = 'players';
@@ -129,7 +142,6 @@ const box = document.getElementsByClassName('box');
 // }
 function boardOperation() {
     $('.box').one('click', function() {
-        console.log(currentPlayer);
         let index = $('.box').index(this);
         let mainArrayIndex = availableSquares.indexOf(index);
         if (currentPlayer === player1) {
@@ -141,7 +153,8 @@ function boardOperation() {
             oArray.push(index);
             checkWin();
             currentPlayer = player2;
-        } else {
+            turn(currentPlayer);
+        } else if (currentPlayer === player2) {
             this.style.backgroundImage = 'url(img/x.svg)';
             this.className = 'box box-filled-2';
             if (mainArrayIndex > -1) {
@@ -150,9 +163,8 @@ function boardOperation() {
             xArray.push(index);
             checkWin();
             currentPlayer = player1;
+            turn(currentPlayer);
         }
-
-        turn(currentPlayer);
     });
 
     $('.box').on('mouseover', function() {
@@ -173,7 +185,6 @@ function boardOperation() {
 }
 
 function clearBoard() {
-    currentPlayer = player1;
     oArray = [];
     xArray = [];
     availableSquares = [0, 1, 2, 3, 4, 5, 6, 7, 8];

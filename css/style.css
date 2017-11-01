@@ -92,7 +92,7 @@ h1 {
   position: absolute;
   top: 1rem;
   width: 35%;
-  padding: 1.25em 0 1em;
+  padding: 0.8em 0 0.8em;
   outline: 1px solid #ccc;
   transition: 1s; }
   .players svg g {
@@ -110,7 +110,16 @@ h1 {
     background: #FFA000; }
   #player2.active {
     background: #3688C3; }
-
+#player1, #player2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#player1 p, #player2 p {
+  margin-left: 20px;
+  color: #000;
+  font-size: 1.5rem;
+}
 .boxes {
   width: 480px;
   margin: 3em auto 0; }
