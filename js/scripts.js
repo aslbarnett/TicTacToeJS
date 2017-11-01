@@ -187,21 +187,23 @@ function boardOperation() {
 
 function computerBoardOperation() {
     const randomSquare = availableSquares[Math.floor(Math.random() * availableSquares.length)];
-    $('.box').each(function() {
-        if ($('.box').index(this) === randomSquare) {
-            this.style.backgroundImage = 'url(img/x.svg)';
-            this.className = 'box box-filled-2';
-            let index = $('.box').index(this);
-            let mainArrayIndex = availableSquares.indexOf(index);
-            if (mainArrayIndex > -1) {
-                availableSquares.splice(mainArrayIndex, 1);
+    setTimeout(function () {
+        $('.box').each(function() {
+            if ($('.box').index(this) === randomSquare) {
+                this.style.backgroundImage = 'url(img/x.svg)';
+                this.className = 'box box-filled-2';
+                let index = $('.box').index(this);
+                let mainArrayIndex = availableSquares.indexOf(index);
+                if (mainArrayIndex > -1) {
+                    availableSquares.splice(mainArrayIndex, 1);
+                }
+                xArray.push(index);
+                checkWin();
+                currentPlayer = player1;
+                turn(currentPlayer);
             }
-            xArray.push(index);
-            checkWin();
-            currentPlayer = player1;
-            turn(currentPlayer);
-        }
-    });
+        });
+    }, 1000);
 }
 
 function clearBoard() {
