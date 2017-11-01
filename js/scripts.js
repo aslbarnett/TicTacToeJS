@@ -18,6 +18,11 @@ const endScreenContainer = document.createElement('div');
 const player1Element = document.getElementById('player1');
 const player2Element = document.getElementById('player2');
 
+const headerWin = document.createElement('header');
+const winP = document.createElement('p');
+const winH1 = document.createElement('h1');
+const winA = document.createElement('a');
+
 /* -+-+-+---------------------------------+-+-+-
 HELPER METHODS
 -+-+-+---------------------------------+-+-+- */
@@ -50,6 +55,7 @@ function createStartScreen(container) {
     startScreenLink.addEventListener('click', function() {
         hideStartScreen();
         showBoard();
+        boardOperation();
     });
 
     startScreenHeader.appendChild(startScreenH1);
@@ -85,38 +91,83 @@ function turn(player) {
 const box = document.getElementsByClassName('box');
 
 
-for (let i = 0; i < box.length; i++) {
-    box[i].addEventListener('click', function() {
+// for (let i = 0; i < box.length; i++) {
+//     box[i].addEventListener('click', function() {
+//         if (currentPlayer === player1) {
+//             box[i].style.backgroundImage = 'url(img/o.svg)';
+//             box[i].className = 'box box-filled-1';
+//             oArray.push(i);
+//             checkWin();
+//             currentPlayer = player2;
+//             turn(currentPlayer);
+//         } else {
+//             box[i].style.backgroundImage = 'url(img/x.svg)';
+//             box[i].className = 'box box-filled-2';
+//             xArray.push(i);
+//             checkWin();
+//             currentPlayer = player1;
+//             turn(currentPlayer);
+//         }
+//     });
+//     box[i].addEventListener('mouseover', function() {
+//         if (!(box[i].className === 'box box-filled-1') && !(box[i].className === 'box box-filled-2')) {
+//             if (currentPlayer === player1) {
+//                 box[i].style.backgroundImage = 'url(img/o.svg)';
+//             } else {
+//                 box[i].style.backgroundImage = 'url(img/x.svg)';
+//             }
+//         }
+//     });
+//     box[i].addEventListener('mouseout', function() {
+//         if (!(box[i].className === 'box box-filled-1') && !(box[i].className === 'box box-filled-2')) {
+//             box[i].style.backgroundImage = 'none';
+//         }
+//
+//     });
+// }
+function boardOperation() {
+    $('.box').one('click', function() {
         if (currentPlayer === player1) {
-            box[i].style.backgroundImage = 'url(img/o.svg)';
-            box[i].className = 'box box-filled-1';
-            oArray.push(i);
+            this.style.backgroundImage = 'url(img/o.svg)';
+            this.className = 'box box-filled-1';
+            oArray.push($('.box').index(this));
             checkWin();
             currentPlayer = player2;
-            turn(currentPlayer);
         } else {
-            box[i].style.backgroundImage = 'url(img/x.svg)';
-            box[i].className = 'box box-filled-2';
-            xArray.push(i);
+            this.style.backgroundImage = 'url(img/x.svg)';
+            this.className = 'box box-filled-2';
+            xArray.push($('.box').index(this));
             checkWin();
             currentPlayer = player1;
-            turn(currentPlayer);
+
         }
+
+        turn(currentPlayer);
     });
-    box[i].addEventListener('mouseover', function() {
-        if (!(box[i].className === 'box box-filled-1') && !(box[i].className === 'box box-filled-2')) {
+
+    $('.box').on('mouseover', function() {
+        if (!(this.className === 'box box-filled-1') && !(this.className === 'box box-filled-2')) {
             if (currentPlayer === player1) {
-                box[i].style.backgroundImage = 'url(img/o.svg)';
+                this.style.backgroundImage = 'url(img/o.svg)';
             } else {
-                box[i].style.backgroundImage = 'url(img/x.svg)';
+                this.style.backgroundImage = 'url(img/x.svg)';
             }
         }
     });
-    box[i].addEventListener('mouseout', function() {
-        if (!(box[i].className === 'box box-filled-1') && !(box[i].className === 'box box-filled-2')) {
-            box[i].style.backgroundImage = 'none';
-        }
 
+    $('.box').on('mouseout', function() {
+        if (!(this.className === 'box box-filled-1') && !(this.className === 'box box-filled-2')) {
+            this.style.backgroundImage = 'none';
+        }
+    });
+}
+
+function clearBoard() {
+    oArray = [];
+    xArray = [];
+    $('.box').each(function () {
+        this.style.backgroundImage = 'none';
+        this.className = 'box';
     });
 }
 
@@ -141,18 +192,18 @@ function checkWin() {
         [0, 4, 8],
         [2, 4, 6]
     ];
-    console.log(xArray);
     for (let j = 0; j < winArray.length; j++) {
         let checkXArray = winArray[j].every(function (value) { return xArray.indexOf(value) > -1 });
         let checkOArray = winArray[j].every(function (value) { return oArray.indexOf(value) > -1 });
-        console.log(checkXArray);
         if (checkXArray === true) {
+            removeWinScreen();
             hideBoard();
             createWinScreen('Winner', 'screen-win-two');
             hideBoard();
             showWinScreen();
             break;
         } else if (checkOArray === true) {
+            removeWinScreen();
             createWinScreen('Winner', 'screen-win-one');
             hideBoard();
             showWinScreen();
@@ -165,16 +216,18 @@ function checkWin() {
 function createWinScreen(message, classSelection) {
     endScreenContainer.className = 'screen screen-win ' + classSelection;
     endScreenContainer.id = 'finish';
-    const headerWin = document.createElement('header');
-    const winH1 = document.createElement('h1');
-    winH1.innerHTML = 'Tic Tac Toe';
-    winP = document.createElement('p');
+    winH1.innerHTML = 'Tic Tac Toe';git
     winP.className = 'message';
     winP.innerHTML = message;
-    winA = document.createElement('a');
     winA.href = '#';
     winA.className = 'button';
     winA.innerHTML = 'New game';
+    winA.addEventListener('click', function() {
+        removeWinScreen();
+        clearBoard();
+        showBoard();
+        boardOperation();
+    });
 
     headerWin.appendChild(winH1);
     headerWin.appendChild(winP);
@@ -187,6 +240,10 @@ function showWinScreen() {
 }
 
 function removeWinScreen() {
+    headerWin.remove();
+    winH1.remove();
+    winP.remove();
+    winA.remove();
     endScreenContainer.remove();
 }
 
