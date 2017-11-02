@@ -11,7 +11,16 @@ let playerNameElement = document.createElement('p');
 let computerNameElement = document.createElement('p');
 computerNameElement.innerHTML = 'Computer';
 
-
+const winArray = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
 let availableSquares = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 
@@ -155,17 +164,18 @@ function boardOperation() {
             checkWin();
             currentPlayer = player2;
             turn(currentPlayer);
-        } else if (currentPlayer === player2) {
-            this.style.backgroundImage = 'url(img/x.svg)';
-            this.className = 'box box-filled-2';
-            if (mainArrayIndex > -1) {
-                availableSquares.splice(mainArrayIndex, 1);
-            }
-            xArray.push(index);
-            checkWin();
-            currentPlayer = player1;
-            turn(currentPlayer);
         }
+        // } else if (currentPlayer === player2) {
+        //     this.style.backgroundImage = 'url(img/x.svg)';
+        //     this.className = 'box box-filled-2';
+        //     if (mainArrayIndex > -1) {
+        //         availableSquares.splice(mainArrayIndex, 1);
+        //     }
+        //     xArray.push(index);
+        //     checkWin();
+        //     currentPlayer = player1;
+        //     turn(currentPlayer);
+        // }
     });
 
     $('.box').on('mouseover', function() {
@@ -186,10 +196,22 @@ function boardOperation() {
 }
 
 function computerBoardOperation() {
+    let selectedSquare;
     const randomSquare = availableSquares[Math.floor(Math.random() * availableSquares.length)];
+    for (let i = 0; i < availableSquares.length; i++) {
+        if ((oArray.includes(availableSquares[i+1] || oArray.includes(availableSquares[i-1])))) {
+            selectedSquare = availableSquares[i];
+        } else if (xArray.includes(availableSquares[i+1] || xArray.includes(availableSquares[i-1]))) {
+            selectedSquare = availableSquares[i];
+        } else if (xArray.includes(availableSquares[i+2] || xArray.includes(availableSquares[i-2]))) {
+            selectedSquare = availableSquares[i];
+        } else {
+            selectedSquare = randomSquare;
+        }
+    }
     setTimeout(function () {
         $('.box').each(function() {
-            if ($('.box').index(this) === randomSquare) {
+            if ($('.box').index(this) === selectedSquare) {
                 this.style.backgroundImage = 'url(img/x.svg)';
                 this.className = 'box box-filled-2';
                 let index = $('.box').index(this);
@@ -227,16 +249,6 @@ function clearBoard() {
 // [3, 5, 7]
 
 function checkWin() {
-    const winArray = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
     for (let j = 0; j < winArray.length; j++) {
         let checkXArray = winArray[j].every(function (value) { return xArray.indexOf(value) > -1 });
         let checkOArray = winArray[j].every(function (value) { return oArray.indexOf(value) > -1 });
@@ -257,6 +269,12 @@ function checkWin() {
             showWinScreen();
         }
     }
+}
+
+function computerMoveNext() {
+    // winArray
+    // xArray
+    // availableSquares
 
 
 }
