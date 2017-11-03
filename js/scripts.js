@@ -1,4 +1,9 @@
 (function() {
+
+    /* -+-+-+------------------------------+-+-+-
+    Global Variables
+    -+-+-+------------------------------+-+-+- */
+
     let mainBoard;
     const humanPlayer = 'O';
     const computerPlayer = 'X';
@@ -12,8 +17,12 @@
         [0, 4, 8],
         [2, 4, 6]
     ];
+    let game;
 
-// elements for start page
+    /* -+-+-+------------------------------+-+-+-
+    Global Variables: Element for Start Page
+    -+-+-+------------------------------+-+-+- */
+
     const body = document.querySelector('body');
     const entireBoard = document.getElementById('board');
     const startScreenContainer = document.createElement('div');
@@ -21,7 +30,10 @@
     const startScreenH1 = document.createElement('h1');
     const startScreenLink = document.createElement('a');
 
-// elements for board
+    /* -+-+-+------------------------------+-+-+-
+    Global Variables: Element for Board Page
+    -+-+-+------------------------------+-+-+- */
+
     let playerNameElement = document.createElement('p');
     let computerNameElement = document.createElement('p');
     const player1Element = document.getElementById('player1');
@@ -30,23 +42,33 @@
     player1Element.appendChild(playerNameElement);
     player2Element.appendChild(computerNameElement);
 
-// elements for win page
+    /* -+-+-+------------------------------+-+-+-
+    Global Variables: Element for Win Page
+    -+-+-+------------------------------+-+-+- */
+
     const endScreenContainer = document.createElement('div');
     const headerWin = document.createElement('header');
     const winP = document.createElement('p');
     const winH1 = document.createElement('h1');
     const winA = document.createElement('a');
 
-    const squares = document.querySelectorAll('.box');
+    /* -+-+-+------------------------------+-+-+-
+    Global Variables: Squares
+    -+-+-+------------------------------+-+-+- */
 
-// add an ID for each square
+    const squares = document.querySelectorAll('.box');
+    // add an ID for each square
     for (let i = 0; i < squares.length; i++) {
         squares[i].id = i;
     }
 
-    initialStartGame();
+    /* -+-+-+------------------------------+-+-+-
+    Game Class
+    -+-+-+------------------------------+-+-+- */
 
-    function createStartScreen() {
+    function Game() {}
+
+    Game.prototype.createStartScreen = function() {
         startScreenContainer.className = 'screen screen-start';
         startScreenContainer.id = 'start';
         startScreenH1.innerHTML = 'Tic Tac Toe';
@@ -61,20 +83,20 @@
         startScreenHeader.appendChild(startScreenH1);
         startScreenHeader.appendChild(startScreenLink);
         startScreenContainer.appendChild(startScreenHeader);
-    }
+    };
 
-    function showStartScreen() {
+    Game.prototype.showStartScreen = function() {
         body.appendChild(startScreenContainer);
-    }
+    };
 
-    function hideStartScreen() {
+    Game.prototype.hideStartScreen = function() {
         startScreenContainer.remove();
         startScreenHeader.remove();
         startScreenH1.remove();
         startScreenLink.remove();
-    }
+    };
 
-    function createWinScreen(message, classSelection, name) {
+    Game.prototype.createWinScreen = function(message, classSelection, name) {
         endScreenContainer.className = 'screen screen-win ' + classSelection;
         endScreenContainer.id = 'finish';
         winH1.innerHTML = 'Tic Tac Toe';
@@ -94,37 +116,50 @@
         headerWin.appendChild(winP);
         headerWin.appendChild(winA);
         endScreenContainer.appendChild(headerWin);
-    }
+    };
 
-    function showWinScreen() {
+    Game.prototype.showWinScreen = function() {
         body.appendChild(endScreenContainer);
-    }
+    };
 
-    function hideWinScreen() {
+    Game.prototype.hideWinScreen = function() {
         headerWin.remove();
         winH1.remove();
         winP.remove();
         winA.remove();
         endScreenContainer.remove();
-    }
+    };
 
-    function showBoard() {
+    Game.prototype.showBoard = function() {
         entireBoard.style.display = 'block';
-    }
+    };
 
-    function hideBoard() {
+    Game.prototype.hideBoard = function() {
         entireBoard.style.display = 'none';
-    }
+    };
 
+    /* -+-+-+------------------------------+-+-+-
+    *** START OF GAME ***
+    -+-+-+------------------------------+-+-+- */
+
+    initialStartGame();
+
+    /* -+-+-+------------------------------+-+-+-
+    FUNCTIONS
+    -+-+-+------------------------------+-+-+- */
+
+    // start game when it is first loaded onto the screen
     function initialStartGame() {
-        createStartScreen();
-        showStartScreen();
-        hideBoard();
+        game = new Game();
+        game.createStartScreen();
+        game.showStartScreen();
+        game.hideBoard();
     }
 
+    // start game once user clicks on start page button or win page button
     function startGame() {
-        hideStartScreen();
-        hideWinScreen();
+        game.hideStartScreen();
+        game.hideWinScreen();
         player1Element.className = 'players active';
         player2Element.className = 'players';
         // create board elements to keep track of
@@ -136,9 +171,10 @@
             squares[i].addEventListener('mouseover', turnMouseOver, false);
             squares[i].addEventListener('mouseout', turnMouseOut, false);
         }
-        showBoard();
+        game.showBoard();
     }
 
+    // add event listeners to squares
     function addClickToSquare() {
         for (let i = 0; i < squares.length; i++) {
             squares[i].addEventListener('click', turnClick, false);
@@ -147,6 +183,7 @@
         }
     }
 
+    // remove event listeners from squares
     function removeClickFromSquare() {
         for (let i = 0; i < squares.length; i++) {
             squares[i].removeEventListener('click', turnClick, false);
@@ -155,6 +192,7 @@
         }
     }
 
+    // add image when mouse hovers over square for human player
     function turnMouseOver(square) {
         if (typeof  mainBoard[square.target.id] === 'number') {
             let hoverElement = document.getElementById(square.target.id);
@@ -162,6 +200,7 @@
         }
     }
 
+    // remove image when mouse leaves square for human player
     function turnMouseOut(square) {
         if (typeof  mainBoard[square.target.id] === 'number') {
             let hoverElement = document.getElementById(square.target.id);
@@ -169,6 +208,7 @@
         }
     }
 
+    // square check prior to square being filled - check that square is available
     function turnClick(square) {
         // prevent player clicking or computer choosing a square that is already filled
         if (typeof mainBoard[square.target.id] === 'number') {
@@ -178,6 +218,7 @@
                 if (!checkTie()) {
                     removeClickFromSquare();
                     setTimeout(() => {
+                        // computer player turn
                         turn(bestSpot(), computerPlayer);
                         addClickToSquare();
                     }, 1000);
@@ -186,6 +227,7 @@
         }
     }
 
+    // main turn function fills square with appropriate image and color as well as checks if the game has been won
     function turn(squareId, player) {
         // altering board to assign player name X or O instead of number for that square in array
         mainBoard[squareId] = player;
@@ -209,7 +251,9 @@
         return gameWon;
     }
 
+    // check if current board is a win for the player
     function checkWin(board, player) {
+        // get an array with only the squares that that player has
         let plays = board.reduce((accumulator, boardElement, index) => {
             if (boardElement === player) {
                 return accumulator.concat(index);
@@ -228,18 +272,19 @@
         return gameWon;
     }
 
+    // if game has been won,
     function gameOver(gameWon) {
         removeClickFromSquare();
         setTimeout(() => {
             // show the correct winning screen for the correct player
             if (gameWon === humanPlayer) {
-                hideBoard();
-                createWinScreen('Winner', 'screen-win-one', playerName);
-                showWinScreen();
+                game.hideBoard();
+                game.createWinScreen('Winner', 'screen-win-one', playerName);
+                game.showWinScreen();
             } else if (gameWon === computerPlayer) {
-                hideBoard();
-                createWinScreen('Winner', 'screen-win-two', 'Computer');
-                showWinScreen();
+                game.hideBoard();
+                game.createWinScreen('Winner', 'screen-win-two', 'Computer');
+                game.showWinScreen();
             }
         }, 1000);
     }
@@ -251,27 +296,31 @@
         });
     }
 
+    // computer's best move
     function bestSpot() {
         return minimax(mainBoard, computerPlayer).index;
     }
 
+    // check if the board is full
     function checkTie() {
         if (emptySquares().length === 0) {
             removeClickFromSquare();
             setTimeout(() => {
-                hideBoard();
-                createWinScreen('It\'s a Tie!', 'screen-win-tie');
-                showWinScreen();
+                game.hideBoard();
+                game.createWinScreen('It\'s a Tie!', 'screen-win-tie');
+                game.showWinScreen();
                 return true;
             }, 1000);
         }
         return false;
     }
 
+    // minimax function for computer's move
     function minimax(newBoard, player) {
         // find the indexes of the available squares on the board
         let availableSquares = emptySquares(newBoard);
 
+        // assign a score
         if (checkWin(newBoard, player)) {
             return { score: -10 };
         } else if (checkWin(newBoard, computerPlayer)) {
@@ -280,6 +329,7 @@
             return { score: 0 };
         }
         let moves = [];
+        // loop through all available squares and assign scores to square for both human and computer players
         for (let i = 0; i < availableSquares.length; i++) {
             let move = {};
             move.index = newBoard[availableSquares[i]];
@@ -298,6 +348,7 @@
             moves.push(move);
         }
 
+        // work out what the best move is by assigning the highest score to the best move
         let bestMove;
         if (player === computerPlayer) {
             let bestScore = -10000;
@@ -316,6 +367,7 @@
                 }
             }
         }
+        // return the best move
         return moves[bestMove];
     }
 }());
